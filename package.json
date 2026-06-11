@@ -1,0 +1,14 @@
+{
+  "name": "awaresphere-project",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install-all": "npm install --workspace=client --workspace=server",
+    "build-client": "npm run build --workspace=client",
+    "start-server": "npm run start --workspace=server"
+  }
+}

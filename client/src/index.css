@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply font-sans bg-slate-50 text-slate-800 transition-colors duration-300;
+  }
+  body.dark {
+    @apply bg-slate-950 text-slate-100;
+  }
+}
+
+/* Glassmorphism Styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-navbar {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Child Mode Cartoon Borders & Cards */
+.cartoon-card {
+  background: #FFFDF0;
+  border: 4px solid #1E293B;
+  box-shadow: 6px 6px 0px #1E293B;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+}
+
+.cartoon-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #1E293B;
+}
+
+.cartoon-btn {
+  background: #FFB800;
+  border: 3px solid #1E293B;
+  box-shadow: 4px 4px 0px #1E293B;
+  border-radius: 12px;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  font-weight: bold;
+  transition: all 0.1s ease;
+}
+
+.cartoon-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1E293B;
+}
+
+/* High Contrast Mode (Senior Citizen Option) */
+.high-contrast {
+  filter: contrast(1.15) saturate(1.1);
+}
+
+.high-contrast body,
+.high-contrast .glass-card {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #FFFF00 !important;
+}
+
+.high-contrast input,
+.high-contrast select,
+.high-contrast button {
+  background: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+  font-size: 1.25rem !important;
+}
+
+.high-contrast a,
+.high-contrast button:hover {
+  background: #FFFF00 !important;
+  color: #000000 !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-700;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-600;
+}
+
+/* Waveform for Voice Assistant */
+.wave-bar {
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background-color: #0284c7;
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; height: 15px; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; height: 35px; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; height: 25px; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
