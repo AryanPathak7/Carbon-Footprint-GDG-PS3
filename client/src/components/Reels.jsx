@@ -35,7 +35,7 @@ export default function Reels() {
   // New Reel Form states
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Digital Detox');
-  const [videoUrl, setVideoUrl] = useState('https://assets.mixkit.co/videos/preview/mixkit-holding-a-smartphone-showing-a-text-message-40017-large.mp4');
+  const [videoUrl, setVideoUrl] = useState('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4');
   const [question, setQuestion] = useState('');
   const [opt1, setOpt1] = useState('');
   const [opt2, setOpt2] = useState('');
@@ -43,7 +43,43 @@ export default function Reels() {
   const [answer, setAnswer] = useState(0);
   const [explanation, setExplanation] = useState('');
 
+  // File upload and video validation states
+  const [uploadProgress, setUploadProgress] = useState('');
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [videoError, setVideoError] = useState({});
+
   const API_URL = 'http://localhost:5000/api';
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setSelectedFileName(file.name);
+    setUploadProgress('Processing...');
+
+    const fileSizeMB = file.size / (1024 * 1024);
+    if (fileSizeMB > 15) {
+      setToastMsg('Notice: Large files (>15MB) may load slowly.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setVideoUrl(event.target.result);
+      setUploadProgress('Ready');
+      setVideoError({});
+    };
+    reader.onerror = (error) => {
+      console.error('FileReader error:', error);
+      setUploadProgress('Error loading file');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleVideoError = (reelId) => {
+    setVideoError(prev => ({ ...prev, [reelId]: true }));
+  };
 
   const videoPresets = [
     { label: 'Cyber Texting Loop', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
@@ -117,7 +153,12 @@ export default function Reels() {
 
   const handleCreateReel = async (e) => {
     e.preventDefault();
-    if (!title || !question || !opt1 || !opt2 || !opt3) return;
+    if (!title || !videoUrl || !question || !opt1 || !opt2 || !opt3) {
+      setToastMsg('Please fill out all required fields and upload or specify a video.');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
+      return;
+    }
 
     const newReelData = {
       title,
@@ -162,7 +203,14 @@ export default function Reels() {
       };
       const currentReels = mockDb.getReels();
       const updatedLocal = [savedReel, ...currentReels];
-      mockDb.setReels(updatedLocal);
+      try {
+        mockDb.setReels(updatedLocal);
+      } catch (quotaErr) {
+        console.warn('LocalStorage quota exceeded! Storing in memory for this session.', quotaErr.message);
+        setToastMsg('Warning: Storage limit reached. Video won\'t persist after refreshing.');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4500);
+      }
     }
 
     setReels(prev => [savedReel, ...prev]);
@@ -175,10 +223,16 @@ export default function Reels() {
     setOpt2('');
     setOpt3('');
     setExplanation('');
+    setSelectedFileName('');
+    setUploadProgress('');
 
-    setToastMsg('New Reels created successfully!');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
+    // If it was local, and toast was not set by warning
+    const hasWarning = toastMsg && toastMsg.includes('Storage limit');
+    if (!hasWarning) {
+      setToastMsg('New Reel created successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
     setActiveIndex(0); // Scroll to the top and play new reel
   };
 
@@ -237,15 +291,27 @@ export default function Reels() {
             >
               {/* HTML Video player */}
               {isActive ? (
-                <video
-                  id={`video-${reel._id || reel.id}`}
-                  src={reel.url}
-                  autoPlay
-                  loop
-                  muted={muted}
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
+                videoError[reel._id || reel.id] ? (
+                  <div className="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-6 text-center space-y-3">
+                    <Video className="w-12 h-12 text-rose-500 animate-pulse" />
+                    <p className="text-sm font-bold text-slate-200">Playback Blocked</p>
+                    <p className="text-xs text-slate-400 leading-normal">
+                      Browser security blocks local paths. Please use "Create Reel" Option 1 to upload the file, or enter a valid web URL.
+                    </p>
+                  </div>
+                ) : (
+                  <video
+                    id={`video-${reel._id || reel.id}`}
+                    key={reel._id || reel.id}
+                    src={reel.url}
+                    autoPlay
+                    loop
+                    muted={muted}
+                    playsInline
+                    onError={() => handleVideoError(reel._id || reel.id)}
+                    className="w-full h-full object-cover"
+                  />
+                )
               ) : (
                 <div className="w-full h-full bg-slate-900 flex items-center justify-center">
                   <Play className="w-16 h-16 text-slate-400" />
@@ -344,16 +410,48 @@ export default function Reels() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase">Video Path / URL</label>
-              <input
-                type="text"
-                required
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="e.g. /videos/my-video.mp4 or https://..."
-                className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-3 focus:ring-1 focus:ring-sky-500"
-              />
+            <div className="space-y-3 p-3 bg-slate-100/50 dark:bg-slate-900/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 text-slate-800 dark:text-slate-100">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-emerald-500 uppercase flex items-center gap-1">
+                  <Video className="w-3.5 h-3.5" /> Option 1: Upload Video File
+                </label>
+                <input
+                  id="reel-file-input"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileChange}
+                  className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-slate-800 dark:file:text-slate-200 cursor-pointer"
+                />
+                {selectedFileName && (
+                  <div className="text-[10px] font-medium text-slate-500 flex items-center justify-between mt-1">
+                    <span className="truncate max-w-[200px]">Selected: {selectedFileName}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">{uploadProgress}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                <span className="flex-shrink mx-2 text-[9px] text-slate-400 font-bold uppercase">Or</span>
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-400 uppercase">Option 2: Video URL or Path</label>
+                <input
+                  type="text"
+                  value={selectedFileName ? '' : videoUrl}
+                  onChange={(e) => {
+                    setVideoUrl(e.target.value);
+                    setSelectedFileName('');
+                    setUploadProgress('');
+                    const fileInput = document.getElementById('reel-file-input');
+                    if (fileInput) fileInput.value = '';
+                  }}
+                  placeholder="e.g. https://commondatastorage.googleapis.com/...mp4"
+                  className="w-full bg-white dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-3 focus:ring-1 focus:ring-sky-500 text-slate-800 dark:text-slate-100"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -362,7 +460,7 @@ export default function Reels() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-2.5 focus:ring-1 focus:ring-sky-500"
+                  className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-2.5 focus:ring-1 focus:ring-sky-500 text-slate-800 dark:text-slate-100"
                 >
                   <option value="Cyber Fraud Prevention">Cyber Safety</option>
                   <option value="Climate Change">Climate Change</option>
@@ -378,9 +476,13 @@ export default function Reels() {
                   onChange={(e) => {
                     if (e.target.value) {
                       setVideoUrl(e.target.value);
+                      setSelectedFileName('');
+                      setUploadProgress('');
+                      const fileInput = document.getElementById('reel-file-input');
+                      if (fileInput) fileInput.value = '';
                     }
                   }}
-                  className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-2.5 focus:ring-1 focus:ring-sky-500"
+                  className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-2.5 focus:ring-1 focus:ring-sky-500 text-slate-800 dark:text-slate-100"
                 >
                   <option value="">-- Choose Preset --</option>
                   {videoPresets.map((preset, pIdx) => (
