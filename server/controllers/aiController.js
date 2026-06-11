@@ -1,10 +1,8 @@
-import { OpenAI } from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-let openai;
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-  });
+let genAI;
+if (process.env.GEMINI_API_KEY) {
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 }
 
 // Local Persona-based responses for fallback (or when key isn't provided)
@@ -58,8 +56,8 @@ export const getAIChatResponse = async (req, res) => {
     return res.status(400).json({ message: 'Prompt is required' });
   }
 
-  // If OpenAI API is configured
-  if (openai) {
+  // If Gemini API is configured
+  if (genAI) {
     try {
       let systemInstructions = `You are the AwareSphere AI assistant. Your goal is to explain social awareness topics (Digital Wellbeing, Cyber Safety, Mental Health, Environment, Financial Literacy, Road Safety, Social Responsibility) and recommend real-world actions.`;
       
@@ -73,19 +71,18 @@ export const getAIChatResponse = async (req, res) => {
         systemInstructions += ` Explain concepts professionally, clearly, focusing on actionable steps, scientific facts, and social responsibility.`;
       }
 
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: systemInstructions },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 300,
-        temperature: 0.7
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        systemInstruction: systemInstructions
       });
 
-      return res.json({ response: response.choices[0].message.content });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      return res.json({ response: text });
     } catch (error) {
-      console.warn("OpenAI API call failed, falling back to local NLP generator.", error.message);
+      console.warn("Gemini API call failed, falling back to local NLP generator.", error.message);
     }
   }
 
