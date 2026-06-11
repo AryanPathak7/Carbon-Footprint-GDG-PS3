@@ -3,7 +3,7 @@ import { mockDb, initializeMockDb } from '../utils/mockDb';
 
 const AuthContext = createContext();
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

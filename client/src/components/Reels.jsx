@@ -48,7 +48,7 @@ export default function Reels() {
   const [selectedFileName, setSelectedFileName] = useState('');
   const [videoError, setVideoError] = useState({});
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = '/api';
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
