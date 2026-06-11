@@ -247,7 +247,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_1',
     title: 'Spotting SMS Fraud in 60s',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-holding-a-smartphone-showing-a-text-message-40017-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     category: 'Cyber Fraud Prevention',
     likes: 245,
     saves: 110,
@@ -261,7 +261,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_2',
     title: 'Plastic Audit: Home Edition',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-putting-plastic-bottles-into-a-recycling-bin-34139-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     category: 'Climate Change',
     likes: 389,
     saves: 202,
@@ -275,7 +275,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_3',
     title: 'Digital Detox 20-20-20 Rule',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-man-working-late-in-front-of-his-computer-screen-34283-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     category: 'Digital Detox',
     likes: 188,
     saves: 95,
@@ -289,7 +289,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_4',
     title: 'Mindfulness & Box Breathing',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-meditating-in-nature-31952-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     category: 'Mental Health',
     likes: 412,
     saves: 180,
@@ -303,7 +303,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_5',
     title: 'Cycle Safety: Helmet Fits',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-cyclist-riding-on-a-road-34483-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     category: 'Health Awareness',
     likes: 156,
     saves: 45,

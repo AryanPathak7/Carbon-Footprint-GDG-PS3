@@ -46,11 +46,11 @@ export default function Reels() {
   const API_URL = 'http://localhost:5000/api';
 
   const videoPresets = [
-    { label: 'Cyber Texting Loop', url: 'https://assets.mixkit.co/videos/preview/mixkit-holding-a-smartphone-showing-a-text-message-40017-large.mp4' },
-    { label: 'Plastic Recycling Bin', url: 'https://assets.mixkit.co/videos/preview/mixkit-putting-plastic-bottles-into-a-recycling-bin-34139-large.mp4' },
-    { label: 'Late Night Screen Glow', url: 'https://assets.mixkit.co/videos/preview/mixkit-man-working-late-in-front-of-his-computer-screen-34283-large.mp4' },
-    { label: 'Forest Meditating', url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-meditating-in-nature-31952-large.mp4' },
-    { label: 'Cyclist Safe Commute', url: 'https://assets.mixkit.co/videos/preview/mixkit-cyclist-riding-on-a-road-34483-large.mp4' }
+    { label: 'Cyber Texting Loop', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+    { label: 'Plastic Recycling Bin', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+    { label: 'Late Night Screen Glow', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
+    { label: 'Forest Meditating', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+    { label: 'Cyclist Safe Commute', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' }
   ];
 
   // Fetch reels from database on mount
@@ -215,7 +215,20 @@ export default function Reels() {
           return (
             <div 
               key={reel._id || reel.id}
-              onClick={() => setActiveIndex(idx)}
+              onClick={() => {
+                if (isActive) {
+                  const videoEl = document.getElementById(`video-${reel._id || reel.id}`);
+                  if (videoEl) {
+                    if (videoEl.paused) {
+                      videoEl.play().catch(err => console.log('Autoplay error:', err.message));
+                    } else {
+                      videoEl.pause();
+                    }
+                  }
+                } else {
+                  setActiveIndex(idx);
+                }
+              }}
               className={`relative h-[500px] w-full rounded-3xl overflow-hidden shadow-2xl border-4 transition-all duration-300 ${
                 isActive 
                   ? 'border-emerald-500 scale-[1.02]' 
@@ -225,6 +238,7 @@ export default function Reels() {
               {/* HTML Video player */}
               {isActive ? (
                 <video
+                  id={`video-${reel._id || reel.id}`}
                   src={reel.url}
                   autoPlay
                   loop
@@ -330,6 +344,18 @@ export default function Reels() {
               />
             </div>
 
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-400 uppercase">Video Path / URL</label>
+              <input
+                type="text"
+                required
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+                placeholder="e.g. /videos/my-video.mp4 or https://..."
+                className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-3 focus:ring-1 focus:ring-sky-500"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-400 uppercase">Category</label>
@@ -347,12 +373,16 @@ export default function Reels() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-400 uppercase">Video Loop Preset</label>
+                <label className="text-xs font-bold text-slate-400 uppercase">Preset Auto-Fill</label>
                 <select
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setVideoUrl(e.target.value);
+                    }
+                  }}
                   className="w-full bg-slate-100 dark:bg-slate-900 border-none outline-none text-xs rounded-xl p-2.5 focus:ring-1 focus:ring-sky-500"
                 >
+                  <option value="">-- Choose Preset --</option>
                   {videoPresets.map((preset, pIdx) => (
                     <option key={pIdx} value={preset.url}>{preset.label}</option>
                   ))}
