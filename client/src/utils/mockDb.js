@@ -247,7 +247,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_1',
     title: 'Spotting SMS Fraud in 60s',
-    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    url: '/videos/movie.mp4',
     category: 'Cyber Fraud Prevention',
     likes: 245,
     saves: 110,
@@ -261,7 +261,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_2',
     title: 'Plastic Audit: Home Edition',
-    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    url: '/videos/mov_bbb.mp4',
     category: 'Climate Change',
     likes: 389,
     saves: 202,
@@ -275,7 +275,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_3',
     title: 'Digital Detox 20-20-20 Rule',
-    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    url: '/videos/movie.mp4',
     category: 'Digital Detox',
     likes: 188,
     saves: 95,
@@ -289,7 +289,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_4',
     title: 'Mindfulness & Box Breathing',
-    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+    url: '/videos/mov_bbb.mp4',
     category: 'Mental Health',
     likes: 412,
     saves: 180,
@@ -303,7 +303,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_5',
     title: 'Cycle Safety: Helmet Fits',
-    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    url: '/videos/movie.mp4',
     category: 'Health Awareness',
     likes: 156,
     saves: 45,
@@ -334,7 +334,23 @@ export const initializeMockDb = () => {
   getStorageData(KEYS.CAMPAIGNS, DEFAULT_CAMPAIGNS);
   getStorageData(KEYS.CHALLENGES, DEFAULT_CHALLENGES);
   getStorageData(KEYS.ACTIONS, DEFAULT_ACTIONS);
-  getStorageData(KEYS.REELS, DEFAULT_REELS);
+  
+  // Sanitize loaded reels to migrate old external URLs to reliable local paths
+  const loadedReels = getStorageData(KEYS.REELS, DEFAULT_REELS);
+  let hasChanges = false;
+  const sanitized = loadedReels.map(reel => {
+    if (reel.url && (reel.url.includes('commondatastorage.googleapis.com') || reel.url.includes('mixkit.co'))) {
+      const match = DEFAULT_REELS.find(d => d.id === reel.id || d.title === reel.title);
+      if (match) {
+        hasChanges = true;
+        return { ...reel, url: match.url };
+      }
+    }
+    return reel;
+  });
+  if (hasChanges) {
+    setStorageData(KEYS.REELS, sanitized);
+  }
 };
 
 export const mockDb = {
