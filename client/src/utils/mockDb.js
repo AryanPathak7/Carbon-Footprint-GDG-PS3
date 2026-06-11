@@ -247,7 +247,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_1',
     title: 'Spotting SMS Fraud in 60s',
-    url: '/videos/movie.mp4',
+    url: '/videos/AQObZPBHkLPRHoQyQiNRSig4VBW2ZavOU0khOlKnhF0WzIMdg9Hj4DGOJl3bIIESP3J6nWqYCELhtcX1xZ9dmxvOmGDKsSm4h1bzBxI.mp4',
     category: 'Cyber Fraud Prevention',
     likes: 245,
     saves: 110,
@@ -261,7 +261,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_2',
     title: 'Plastic Audit: Home Edition',
-    url: '/videos/mov_bbb.mp4',
+    url: '/videos/AQNMxtBY6x6Uk1i1ofEM8PXLL5d-l3_PAiXyZhn4UtDZ8hdkzNMF0xCMNqP3JM-pb8IjueY43zyV4XhivXBhm1sUlD9d5E8sweuBNCU.mp4',
     category: 'Climate Change',
     likes: 389,
     saves: 202,
@@ -275,7 +275,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_3',
     title: 'Digital Detox 20-20-20 Rule',
-    url: '/videos/movie.mp4',
+    url: '/videos/AQN4z94MPubxPHXRSiCaa5PM9nbRZ6UrdwU4qF_O9VBkNl13C2c_FmkQEDE4cxFLzC7ihGeH_saQv4xdkyN05FQoCgjOfJDX2fr5Cgk.mp4',
     category: 'Digital Detox',
     likes: 188,
     saves: 95,
@@ -289,7 +289,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_4',
     title: 'Mindfulness & Box Breathing',
-    url: '/videos/mov_bbb.mp4',
+    url: '/videos/AQMc1gRGzsVL4lI19Fuy6LjY5Wi1A5oZD0yJxnwQP729n7ozaCj0tQ2N9rkq4lq2waeS14s2_DqPPb1hrNj4P1kpIB6i5XWKRJGYk5U.mp4',
     category: 'Mental Health',
     likes: 412,
     saves: 180,
@@ -303,7 +303,7 @@ const DEFAULT_REELS = [
   {
     id: 'reel_5',
     title: 'Cycle Safety: Helmet Fits',
-    url: '/videos/movie.mp4',
+    url: '/videos/AQMYMfRoBD3g7hZ-2_a4QIXl0v_T43Y2ethU_OlFaltN-WXjCiOgl-qz9dBoTlMe4Gof_agqQTb05nx9FOfweK3-.mp4',
     category: 'Health Awareness',
     likes: 156,
     saves: 45,
@@ -334,7 +334,7 @@ export const initializeMockDb = () => {
   getStorageData(KEYS.CAMPAIGNS, DEFAULT_CAMPAIGNS);
   getStorageData(KEYS.CHALLENGES, DEFAULT_CHALLENGES);
   getStorageData(KEYS.ACTIONS, DEFAULT_ACTIONS);
-  
+
   // Sanitize loaded reels to migrate old external URLs to reliable local paths
   const loadedReels = getStorageData(KEYS.REELS, DEFAULT_REELS);
   let hasChanges = false;
@@ -355,16 +355,16 @@ export const initializeMockDb = () => {
 
 export const mockDb = {
   getKeys: () => KEYS,
-  
+
   getUsers: () => getStorageData(KEYS.USERS, DEFAULT_USERS),
   setUsers: (users) => setStorageData(KEYS.USERS, users),
-  
+
   getCampaigns: () => getStorageData(KEYS.CAMPAIGNS, DEFAULT_CAMPAIGNS),
   setCampaigns: (campaigns) => setStorageData(KEYS.CAMPAIGNS, campaigns),
-  
+
   getChallenges: () => getStorageData(KEYS.CHALLENGES, DEFAULT_CHALLENGES),
   setChallenges: (challenges) => setStorageData(KEYS.CHALLENGES, challenges),
-  
+
   getActions: () => getStorageData(KEYS.ACTIONS, DEFAULT_ACTIONS),
   setActions: (actions) => setStorageData(KEYS.ACTIONS, actions),
 
