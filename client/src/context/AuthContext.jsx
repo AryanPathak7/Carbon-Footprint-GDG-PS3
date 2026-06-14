@@ -171,12 +171,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Switch Role / User type easily during hackathon testing
-  const selectDemoUser = (userId) => {
+  const selectDemoUser = async (userId) => {
     const users = mockDb.getUsers();
     const matched = users.find(u => u._id === userId);
     if (matched) {
-      setUser(matched);
-      localStorage.setItem('awaresphere_current_user', JSON.stringify(matched));
+      await login(matched.email, 'password');
     }
   };
 

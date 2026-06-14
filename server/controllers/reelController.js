@@ -41,7 +41,7 @@ export const createReel = async (req, res) => {
         quiz: {
           question: quiz?.question || '',
           options: quiz?.options || [],
-          answerIndex: Number(quiz?.answerIndex) || 0,
+          answer: Number(quiz?.answer) || 0,
           explanation: quiz?.explanation || ''
         },
         likes: 0,

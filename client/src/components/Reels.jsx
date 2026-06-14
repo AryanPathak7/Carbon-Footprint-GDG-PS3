@@ -82,11 +82,11 @@ export default function Reels() {
   };
 
   const videoPresets = [
-    { label: 'Cyber Texting Loop', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
-    { label: 'Plastic Recycling Bin', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
-    { label: 'Late Night Screen Glow', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
-    { label: 'Forest Meditating', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
-    { label: 'Cyclist Safe Commute', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' }
+    { label: 'Spotting SMS Fraud', url: '/videos/AQObZPBHkLPRHoQyQiNRSig4VBW2ZavOU0khOlKnhF0WzIMdg9Hj4DGOJl3bIIESP3J6nWqYCELhtcX1xZ9dmxvOmGDKsSm4h1bzBxI.mp4' },
+    { label: 'Plastic Audit', url: '/videos/AQNMxtBY6x6Uk1i1ofEM8PXLL5d-l3_PAiXyZhn4UtDZ8hdkzNMF0xCMNqP3JM-pb8IjueY43zyV4XhivXBhm1sUlD9d5E8sweuBNCU.mp4' },
+    { label: 'Digital Detox 20-20-20', url: '/videos/AQN4z94MPubxPHXRSiCaa5PM9nbRZ6UrdwU4qF_O9VBkNl13C2c_FmkQEDE4cxFLzC7ihGeH_saQv4xdkyN05FQoCgjOfJDX2fr5Cgk.mp4' },
+    { label: 'Box Breathing', url: '/videos/AQMc1gRGzsVL4lI19Fuy6LjY5Wi1A5oZD0yJxnwQP729n7ozaCj0tQ2N9rkq4lq2waeS14s2_DqPPb1hrNj4P1kpIB6i5XWKRJGYk5U.mp4' },
+    { label: 'Cycle Safety', url: '/videos/AQMYMfRoBD3g7hZ-2_a4QIXl0v_T43Y2ethU_OlFaltN-WXjCiOgl-qz9dBoTlMe4Gof_agqQTb05nx9FOfweK3-.mp4' }
   ];
 
   // Fetch reels from database on mount
@@ -97,7 +97,18 @@ export default function Reels() {
         if (res.ok) {
           const data = await res.json();
           if (data && data.length > 0) {
-            setReels(data);
+            // Sanitize returned reels to migrate legacy external URLs to local self-hosted assets
+            const sanitized = data.map(reel => {
+              if (reel.url && (reel.url.includes('commondatastorage.googleapis.com') || reel.url.includes('mixkit.co'))) {
+                const defaults = mockDb.getReels();
+                const match = defaults.find(d => d.id === reel.id || d._id === reel._id || d.title === reel.title);
+                if (match) {
+                  return { ...reel, url: match.url };
+                }
+              }
+              return reel;
+            });
+            setReels(sanitized);
           }
         }
       } catch (err) {
