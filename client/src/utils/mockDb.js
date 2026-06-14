@@ -335,16 +335,19 @@ export const initializeMockDb = () => {
   getStorageData(KEYS.CHALLENGES, DEFAULT_CHALLENGES);
   getStorageData(KEYS.ACTIONS, DEFAULT_ACTIONS);
 
-  // Sanitize loaded reels to migrate old external URLs to reliable local paths
+  // Sanitize loaded reels to migrate old external or placeholder URLs to reliable local paths
   const loadedReels = getStorageData(KEYS.REELS, DEFAULT_REELS);
   let hasChanges = false;
-  const sanitized = loadedReels.map(reel => {
-    if (reel.url && (reel.url.includes('commondatastorage.googleapis.com') || reel.url.includes('mixkit.co'))) {
+  const sanitized = loadedReels.map((reel, idx) => {
+    const isValidLocal = DEFAULT_REELS.some(d => d.url === reel.url);
+    const isDataUri = reel.url && reel.url.startsWith('data:');
+    if (!isValidLocal && !isDataUri) {
+      hasChanges = true;
       const match = DEFAULT_REELS.find(d => d.id === reel.id || d.title === reel.title);
       if (match) {
-        hasChanges = true;
         return { ...reel, url: match.url };
       }
+      return { ...reel, url: DEFAULT_REELS[idx % DEFAULT_REELS.length].url };
     }
     return reel;
   });
