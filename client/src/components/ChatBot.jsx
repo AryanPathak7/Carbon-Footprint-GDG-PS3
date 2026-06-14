@@ -191,12 +191,9 @@ export default function ChatBot({ user }) {
           {Object.keys(personaDetails).map((persona) => (
             <button
               key={persona}
-              onClick={() => {
-                setAgePersona(persona);
-                if (synthRef.current) synthRef.current.cancel();
-                setIsSpeaking(false);
-              }}
-              title={personaDetails[persona].desc}
+              onClick={() => setAgePersona(persona)}
+              aria-label={`Switch AI to ${personaDetails[persona].label}`}
+              aria-pressed={agePersona === persona}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 agePersona === persona 
                   ? 'bg-emerald-600 text-white shadow-md' 
@@ -232,6 +229,7 @@ export default function ChatBot({ user }) {
                   {isAI && msg.text !== 'Typing...' && (
                     <button
                       onClick={() => speakText(msg.text)}
+                      aria-label={isSpeaking ? "Stop voice speaking" : "Speak response aloud"}
                       className="absolute bottom-2 right-2 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-emerald-500 transition-colors"
                       title="Speak Text"
                     >
@@ -268,6 +266,7 @@ export default function ChatBot({ user }) {
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-500/5 flex items-center gap-3">
         <button
           onClick={simulateVoiceInput}
+          aria-label={isRecording ? "Stop voice input simulation" : "Simulate voice input"}
           className={`p-3 rounded-full transition-all shrink-0 ${
             isRecording 
               ? 'bg-red-500 text-white animate-pulse' 
@@ -283,12 +282,14 @@ export default function ChatBot({ user }) {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          aria-label="AwareSphere chatbot question input"
           placeholder={`Ask anything (${personaDetails[agePersona].label} active)...`}
           className="flex-1 bg-slate-200 dark:bg-slate-800 border-none outline-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-emerald-500"
         />
 
         <button
           onClick={() => handleSend()}
+          aria-label="Send message to AI assistant"
           className="p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg shadow-emerald-500/10 hover:scale-105 transition-all shrink-0"
         >
           <Send className="w-5 h-5" />

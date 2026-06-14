@@ -9,6 +9,10 @@
   "scripts": {
     "install-all": "npm install --workspace=client --workspace=server",
     "build-client": "npm run build --workspace=client",
-    "start-server": "npm run start --workspace=server"
+    "start-server": "npm run start --workspace=server",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.8"
   }
 }

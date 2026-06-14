@@ -29,24 +29,24 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { mockDb } from './utils/mockDb';
 
-// Subcomponents import
-import LandingPage from './components/LandingPage';
-import Dashboard from './components/Dashboard';
-import ChatBot from './components/ChatBot';
-import Feed from './components/Feed';
-import Reels from './components/Reels';
-import Detox from './components/Detox';
-import FamilyDashboard from './components/FamilyDashboard';
-import ChildZone from './components/ChildZone';
-import SeniorMode from './components/SeniorMode';
-import Challenges from './components/Challenges';
-import CampaignMap from './components/CampaignMap';
-import ImpactTracker from './components/ImpactTracker';
-import WebAR from './components/WebAR';
-import Leaderboards from './components/Leaderboards';
-import QuizEngine from './components/QuizEngine';
-import NGOManagement from './components/NGOManagement';
-import AdminPanel from './components/AdminPanel';
+// Subcomponents import using React.lazy for Code-Splitting/Efficiency
+const LandingPage = React.lazy(() => import('./components/LandingPage'));
+const Dashboard = React.lazy(() => import('./components/Dashboard'));
+const ChatBot = React.lazy(() => import('./components/ChatBot'));
+const Feed = React.lazy(() => import('./components/Feed'));
+const Reels = React.lazy(() => import('./components/Reels'));
+const Detox = React.lazy(() => import('./components/Detox'));
+const FamilyDashboard = React.lazy(() => import('./components/FamilyDashboard'));
+const ChildZone = React.lazy(() => import('./components/ChildZone'));
+const SeniorMode = React.lazy(() => import('./components/SeniorMode'));
+const Challenges = React.lazy(() => import('./components/Challenges'));
+const CampaignMap = React.lazy(() => import('./components/CampaignMap'));
+const ImpactTracker = React.lazy(() => import('./components/ImpactTracker'));
+const WebAR = React.lazy(() => import('./components/WebAR'));
+const Leaderboards = React.lazy(() => import('./components/Leaderboards'));
+const QuizEngine = React.lazy(() => import('./components/QuizEngine'));
+const NGOManagement = React.lazy(() => import('./components/NGOManagement'));
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 
 function AppContent() {
   const { user, logout, selectDemoUser } = useAuth();
@@ -88,7 +88,15 @@ function AppContent() {
   };
 
   if (!inApp) {
-    return <LandingPage onEnterApp={handleEnterApp} />;
+    return (
+      <React.Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen bg-slate-950">
+          <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }>
+        <LandingPage onEnterApp={handleEnterApp} />
+      </React.Suspense>
+    );
   }
 
   // Active view renderer
@@ -274,7 +282,13 @@ function AppContent() {
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50 dark:bg-slate-950 pb-20 md:pb-8">
-          {renderView()}
+          <React.Suspense fallback={
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          }>
+            {renderView()}
+          </React.Suspense>
         </main>
       </div>
 
