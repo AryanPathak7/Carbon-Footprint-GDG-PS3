@@ -10,7 +10,8 @@
     "install-all": "npm install --workspace=client --workspace=server",
     "build-client": "npm run build --workspace=client",
     "start-server": "npm run start --workspace=server",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "npm run build-client"
   },
   "devDependencies": {
     "vitest": "^4.1.8"
