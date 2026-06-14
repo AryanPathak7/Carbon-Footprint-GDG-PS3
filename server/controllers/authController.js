@@ -137,7 +137,31 @@ export const authUser = async (req, res) => {
       }
     }
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+
+    // Auto-seed demo switcher accounts on first login if database is connected but user doesn't exist
+    if (!user && ['citizen@awaresphere.org', 'ngo@greenearth.org', 'admin@awaresphere.org', 'leo@family.com', 'savitri@family.com'].includes(email)) {
+      console.log(`Seeding demo user ${email} into connected database.`);
+      const mockSrc = mockUsers.find(u => u.email === email);
+      if (mockSrc) {
+        user = await User.create({
+          name: mockSrc.name,
+          email: mockSrc.email,
+          password: 'password', // Will be hashed by mongoose pre-save hook
+          role: mockSrc.role,
+          ageGroup: mockSrc.ageGroup,
+          points: mockSrc.points || 0,
+          level: mockSrc.level || 'Explorer',
+          streak: mockSrc.streak || 0,
+          badges: mockSrc.badges || [],
+          interests: mockSrc.interests || [],
+          schoolId: mockSrc.schoolId || '',
+          familyId: mockSrc.familyId || '',
+          digitalDetox: mockSrc.digitalDetox || { screenTimeGoal: 120, screenTimeLogs: [] },
+          lastActiveDate: new Date()
+        });
+      }
+    }
 
     if (user && (await user.matchPassword(password))) {
       // Manage daily streak
